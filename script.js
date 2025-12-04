@@ -11,8 +11,20 @@ const COMPLETION_PREFIX = "rewireNerves_completed_";
 const CUSTOM_PROTOCOLS_KEY = "rewireNerves_customProtocols";
 const ARCHIVED_IDS_KEY = "rewireNerves_archivedIds";
 const DELETED_IDS_KEY = "rewireNerves_deletedIds";
+const THEME_KEY = "rewireNerves_theme";
 
 let toastTimeout = null;
+
+// default theme colors per category
+const defaultTheme = {
+  Trading: "#fbbf24",      // amber
+  Parenting: "#34d399",    // green
+  Relationship: "#fb7185", // rose
+  Self: "#818cf8",         // indigo
+  Other: "#e5e7eb"         // neutral light
+};
+
+let currentTheme = {};
 
 /* ---------- Main load ---------- */
 
@@ -43,6 +55,13 @@ async function loadProtocols() {
     filterAndPopulateProtocols(initialCategory, lastProtocol ? lastProtocol.id : null);
 
     renderArchiveList();
+    renderThemeList();
+    // apply accent based on current protocol or default to Self
+    if (currentProtocol && currentProtocol.category) {
+      applyAccentForCategory(currentProtocol.category);
+    } else {
+      applyAccentForCategory("Self");
+    }
   } catch (error) {
     console.error(error);
     const bodyEl = document.getElementById("protocolBody");
@@ -84,6 +103,51 @@ function loadIdList(key) {
 
 function saveIdList(key, arr) {
   safeSetLocalStorage(key, JSON.stringify(arr));
+}
+
+/* ---------- Theme helpers ---------- */
+
+function loadTheme() {
+  const raw = safeGetLocalStorage(THEME_KEY);
+  let theme = {};
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        theme = parsed;
+      }
+    } catch (e) {
+      console.error("Error parsing theme:", e);
+    }
+  }
+  // merge with defaults so every key exists
+  const merged = {};
+  Object.keys(defaultTheme).forEach(function (key) {
+    merged[key] = defaultTheme[key];
+  });
+  Object.keys(theme).forEach(function (key) {
+    merged[key] = theme[key];
+  });
+  return merged;
+}
+
+function saveTheme() {
+  safeSetLocalStorage(THEME_KEY, JSON.stringify(currentTheme));
+}
+
+function themeColorFor(category) {
+  const cat = category || "Other";
+  if (currentTheme[cat]) return currentTheme[cat];
+  if (currentTheme.Other) return currentTheme.Other;
+  return "#818cf8";
+}
+
+function applyAccentForCategory(category) {
+  const color = themeColorFor(category);
+  const container = document.querySelector(".widget-container");
+  if (container) {
+    container.style.setProperty("--accent", color);
+  }
 }
 
 /* ---------- Categories & dropdowns ---------- */
@@ -204,6 +268,7 @@ function setProtocol(id) {
   safeSetLocalStorage(LAST_PROTOCOL_KEY, id);
   updateCompletionUI(id);
   updateMicroMantra(protocol);
+  applyAccentForCategory(protocol.category);
 }
 
 function clearProtocolDisplay() {
@@ -217,6 +282,7 @@ function clearProtocolDisplay() {
 
   updateCompletionUI(null);
   updateMicroMantra(null);
+  applyAccentForCategory("Self");
 }
 
 /* ---------- Micro Mantra ---------- */
@@ -443,7 +509,6 @@ function setupAddProtocolForm() {
     saveCustomProtocols();
     showToast("Protocol added.");
 
-    // Clear fields
     if (nameEl) nameEl.value = "";
     if (categoryEl) categoryEl.value = "";
     if (tagsEl) tagsEl.value = "";
@@ -588,6 +653,79 @@ function handleDelete(id) {
   loadProtocols();
 }
 
+/* ---------- Theme UI ---------- */
+
+function renderThemeList() {
+  const container = document.getElementById("themeList");
+  if (!container) return;
+
+  // categories from protocols + default keys
+  const categoriesFromProtocols = getUniqueCategories(protocols);
+  const allCategoriesSet = {};
+  Object.keys(defaultTheme).forEach(function (cat) {
+    allCategoriesSet[cat] = true;
+  });
+  categoriesFromProtocols.forEach(function (cat) {
+    allCategoriesSet[cat] = true;
+  });
+
+  const allCategories = Object.keys(allCategoriesSet).sort();
+
+  let html = "";
+  for (let i = 0; i < allCategories.length; i++) {
+    const cat = allCategories[i];
+    const color = themeColorFor(cat);
+    html +=
+      '<div class="theme-row">' +
+      '<span class="theme-label">' +
+      escapeHtml(cat) +
+      "</span>" +
+      '<input class="theme-color-input" type="color" data-category="' +
+      cat +
+      '" value="' +
+      color +
+      '" />' +
+      "</div>";
+  }
+
+  container.innerHTML = html;
+
+  const inputs = container.querySelectorAll(".theme-color-input");
+  inputs.forEach(function (input) {
+    input.addEventListener("input", function () {
+      const cat = input.getAttribute("data-category");
+      const value = input.value;
+      currentTheme[cat] = value;
+      saveTheme();
+      if (currentProtocol && (currentProtocol.category === cat || !currentProtocol.category && cat === "Other")) {
+        applyAccentForCategory(currentProtocol.category);
+      }
+      showToast("Theme updated for " + cat + ".");
+    });
+  });
+}
+
+function setupThemeResetButton() {
+  const btn = document.getElementById("themeResetBtn");
+  if (!btn) return;
+
+  btn.addEventListener("click", function () {
+    currentTheme = {};
+    // overwrite with defaults
+    Object.keys(defaultTheme).forEach(function (cat) {
+      currentTheme[cat] = defaultTheme[cat];
+    });
+    saveTheme();
+    renderThemeList();
+    if (currentProtocol && currentProtocol.category) {
+      applyAccentForCategory(currentProtocol.category);
+    } else {
+      applyAccentForCategory("Self");
+    }
+    showToast("Theme reset to defaults.");
+  });
+}
+
 /* ---------- Utilities ---------- */
 
 function formatLocalDateTime(isoString) {
@@ -643,10 +781,12 @@ function escapeHtml(str) {
 /* ---------- Init ---------- */
 
 document.addEventListener("DOMContentLoaded", function () {
+  currentTheme = loadTheme();
   loadProtocols();
   setupCompletionButton();
   setupRandomButton();
   setupSettingsToggle();
   setupAddProtocolForm();
   setupArchiveCurrentButton();
+  setupThemeResetButton();
 });
