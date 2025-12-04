@@ -16,9 +16,15 @@
           <p class="widget-subtitle">State-shift protocols at a glance</p>
         </div>
       </div>
-      <div class="widget-select-wrapper">
-        <label for="protocolSelect">Protocol:</label>
-        <select id="protocolSelect"></select>
+      <div class="widget-select-group">
+        <div class="widget-select-wrapper">
+          <label for="categorySelect">Type:</label>
+          <select id="categorySelect"></select>
+        </div>
+        <div class="widget-select-wrapper">
+          <label for="protocolSelect">Protocol:</label>
+          <select id="protocolSelect"></select>
+        </div>
       </div>
     </header>
 
@@ -29,7 +35,8 @@
     </main>
 
     <footer class="widget-footer">
-      <span class="widget-footer-text">
+      <button id="completeBtn" class="complete-btn">Mark as completed</button>
+      <span id="completionInfo" class="widget-footer-text">
         Steady gains come from steady nervous systems.
       </span>
     </footer>
