@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rewire Nerves Widget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="widget-container">
+    <header class="widget-header">
+      <div class="widget-title">
+        <span class="widget-icon">🧠</span>
+        <div>
+          <h1>Rewire Nerves</h1>
+          <p class="widget-subtitle">State-shift protocols at a glance</p>
+        </div>
+      </div>
+      <div class="widget-select-wrapper">
+        <label for="protocolSelect">Protocol:</label>
+        <select id="protocolSelect"></select>
+      </div>
+    </header>
+
+    <main class="widget-body">
+      <h2 id="protocolName"></h2>
+      <p id="protocolTags" class="protocol-tags"></p>
+      <pre id="protocolBody" class="protocol-text"></pre>
+    </main>
+
+    <footer class="widget-footer">
+      <span class="widget-footer-text">
+        Steady gains come from steady nervous systems.
+      </span>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
