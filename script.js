@@ -12,6 +12,8 @@ const CUSTOM_PROTOCOLS_KEY = "rewireNerves_customProtocols";
 const ARCHIVED_IDS_KEY = "rewireNerves_archivedIds";
 const DELETED_IDS_KEY = "rewireNerves_deletedIds";
 const THEME_KEY = "rewireNerves_theme";
+const WIDE_MODE_KEY = "rewireNerves_wideMode";
+const BODY_COLLAPSED_KEY = "rewireNerves_bodyCollapsed";
 
 let toastTimeout = null;
 
@@ -56,6 +58,7 @@ async function loadProtocols() {
 
     renderArchiveList();
     renderThemeList();
+
     // apply accent based on current protocol or default to Self
     if (currentProtocol && currentProtocol.category) {
       applyAccentForCategory(currentProtocol.category);
@@ -148,6 +151,79 @@ function applyAccentForCategory(category) {
   if (container) {
     container.style.setProperty("--accent", color);
   }
+}
+
+/* ---------- Wide mode helpers ---------- */
+
+function initWideModeFromStorage() {
+  const stored = safeGetLocalStorage(WIDE_MODE_KEY);
+  let wide = true; // default: ON (wide)
+  if (stored === "false") wide = false;
+  applyWideMode(wide);
+
+  const toggle = document.getElementById("wideModeToggle");
+  if (toggle) {
+    toggle.checked = wide;
+  }
+}
+
+function applyWideMode(wide) {
+  const container = document.querySelector(".widget-container");
+  if (!container) return;
+  if (wide) {
+    container.classList.add("wide-mode");
+  } else {
+    container.classList.remove("wide-mode");
+  }
+  safeSetLocalStorage(WIDE_MODE_KEY, String(wide));
+}
+
+function setupWideModeToggle() {
+  const toggle = document.getElementById("wideModeToggle");
+  if (!toggle) return;
+  toggle.addEventListener("change", function () {
+    const wide = toggle.checked;
+    applyWideMode(wide);
+    showToast(wide ? "Wide mode enabled." : "Wide mode disabled.");
+  });
+}
+
+/* ---------- Collapse helpers ---------- */
+
+function initCollapseFromStorage() {
+  const stored = safeGetLocalStorage(BODY_COLLAPSED_KEY);
+  const collapsed = stored === "true";
+  applyBodyCollapsedState(collapsed);
+}
+
+function applyBodyCollapsedState(collapsed) {
+  const container = document.querySelector(".widget-container");
+  const btn = document.getElementById("collapseToggle");
+  if (!container) return;
+
+  if (collapsed) {
+    container.classList.add("protocol-collapsed");
+  } else {
+    container.classList.remove("protocol-collapsed");
+  }
+
+  if (btn) {
+    btn.textContent = collapsed ? "Expand" : "Collapse";
+  }
+
+  safeSetLocalStorage(BODY_COLLAPSED_KEY, String(collapsed));
+}
+
+function setupCollapseToggle() {
+  const btn = document.getElementById("collapseToggle");
+  if (!btn) return;
+
+  btn.addEventListener("click", function () {
+    const container = document.querySelector(".widget-container");
+    if (!container) return;
+    const isCollapsed = container.classList.contains("protocol-collapsed");
+    applyBodyCollapsedState(!isCollapsed);
+  });
 }
 
 /* ---------- Categories & dropdowns ---------- */
@@ -697,7 +773,11 @@ function renderThemeList() {
       const value = input.value;
       currentTheme[cat] = value;
       saveTheme();
-      if (currentProtocol && (currentProtocol.category === cat || !currentProtocol.category && cat === "Other")) {
+      if (
+        currentProtocol &&
+        (currentProtocol.category === cat ||
+          (!currentProtocol.category && cat === "Other"))
+      ) {
         applyAccentForCategory(currentProtocol.category);
       }
       showToast("Theme updated for " + cat + ".");
@@ -782,6 +862,8 @@ function escapeHtml(str) {
 
 document.addEventListener("DOMContentLoaded", function () {
   currentTheme = loadTheme();
+  initWideModeFromStorage();
+  initCollapseFromStorage();
   loadProtocols();
   setupCompletionButton();
   setupRandomButton();
@@ -789,4 +871,6 @@ document.addEventListener("DOMContentLoaded", function () {
   setupAddProtocolForm();
   setupArchiveCurrentButton();
   setupThemeResetButton();
+  setupWideModeToggle();
+  setupCollapseToggle();
 });
