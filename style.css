@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-/* Center the widget */
+/* Center the widget in the page / iframe */
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: transparent;
@@ -40,7 +40,7 @@ body {
 .widget-header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .widget-title {
@@ -63,12 +63,12 @@ body {
   color: #9ca3af;
 }
 
-/* Controls layout */
+/* Controls: dropdowns + buttons stacked */
 .widget-controls {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 /* Select group */
@@ -86,6 +86,10 @@ body {
   color: #9ca3af;
 }
 
+.widget-select-wrapper label {
+  white-space: nowrap;
+}
+
 .widget-select-wrapper select {
   font-size: 0.75rem;
   padding: 3px 6px;
@@ -95,15 +99,12 @@ body {
   color: #e5e7eb;
 }
 
-/* Control buttons */
+/* Control buttons under the selects */
 .widget-control-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-}
-
-.widget-control-buttons button {
-  padding: 4px 10px;
 }
 
 /* Main content */
@@ -149,7 +150,7 @@ body {
   font-family: inherit;
 }
 
-/* Buttons general styling */
+/* General button styling */
 .complete-btn,
 .random-btn,
 .settings-btn,
@@ -161,6 +162,11 @@ body {
   color: #e5e7eb;
   cursor: pointer;
   transition: 0.15s ease;
+}
+
+.complete-btn,
+.random-btn {
+  padding: 4px 10px;
 }
 
 .settings-btn {
@@ -187,16 +193,25 @@ body {
     0 0 10px var(--accent);
 }
 
-/* Settings panel */
+/* Footer & settings panel */
+.widget-footer {
+  margin-top: 10px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.3);
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Settings panel (slide-down) */
 .settings-panel {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
-  margin-top: 10px;
+  transition: max-height 0.25s ease, opacity 0.25s ease;
   border-top: 1px solid rgba(31, 41, 55, 0.9);
   padding-top: 6px;
-  transition: max-height 0.25s ease, opacity 0.25s ease;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -219,6 +234,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  margin-bottom: 6px;
 }
 
 .settings-field label {
@@ -237,7 +253,21 @@ body {
   resize: vertical;
 }
 
-/* Archive section */
+/* Add protocol buttons */
+.settings-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Archive list */
+.settings-archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
 .archive-list {
   display: flex;
   flex-direction: column;
@@ -269,7 +299,13 @@ body {
   color: #9ca3af;
 }
 
-/* Theme rows */
+/* Theme list */
+.theme-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .theme-row {
   display: flex;
   justify-content: space-between;
@@ -287,9 +323,10 @@ body {
   border: 1px solid #4b5563;
 }
 
-/* Footer info */
+/* Footer text */
 .footer-text-blocks {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .widget-footer-text {
@@ -322,13 +359,8 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Responsive layout */
+/* Responsive tweaks (if iframe is narrow) */
 @media (max-width: 420px) {
-  .widget-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .widget-control-buttons {
     justify-content: flex-start;
   }
