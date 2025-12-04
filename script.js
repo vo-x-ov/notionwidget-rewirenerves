@@ -36,7 +36,8 @@ async function loadProtocols() {
     const categories = getUniqueCategories(protocols);
     populateCategorySelect(categories, lastProtocol ? lastProtocol.category : null);
 
-    const initialCategory = lastProtocol && lastProtocol.category ? lastProtocol.category : "All";
+    const initialCategory =
+      lastProtocol && lastProtocol.category ? lastProtocol.category : "All";
     filterAndPopulateProtocols(initialCategory, lastProtocol ? lastProtocol.id : null);
   } catch (error) {
     console.error(error);
@@ -221,12 +222,12 @@ function updateMicroMantra(protocol) {
   if (!el) return;
 
   if (!protocol) {
-    el.textContent = "Today's micro mantra will appear here.";
+    el.textContent = "I can shift my state, one breath at a time.";
     return;
   }
 
   const mantra = extractMicroMantra(protocol.body);
-  el.textContent = "Today's micro mantra: " + mantra;
+  el.textContent = mantra;
 }
 
 function extractMicroMantra(text) {
@@ -247,18 +248,21 @@ function extractMicroMantra(text) {
     return s.replace(/^[-•\d.)\s]+/, "").trim();
   }
 
+  // Prefer quoted lines
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].indexOf("“") !== -1 || lines[i].indexOf('"') !== -1) {
       return stripBullet(lines[i]);
     }
   }
 
+  // Then affirmation-like sentences
   for (let j = 0; j < lines.length; j++) {
     if (/^(I|This|We|My|It)\b/i.test(lines[j])) {
       return stripBullet(lines[j]);
     }
   }
 
+  // Fall back to first line
   return stripBullet(lines[0]);
 }
 
@@ -323,38 +327,48 @@ function updateCompletionUI(protocolId) {
   }
 }
 
-/* ---------- Random protocol ---------- */
+/* ---------- Random protocol (from ALL active) ---------- */
 
 function setupRandomButton() {
   const btn = document.getElementById("randomBtn");
   if (!btn) return;
 
   btn.addEventListener("click", function () {
-    const select = document.getElementById("protocolSelect");
-    if (!select || select.options.length === 0) return;
+    if (!protocols || protocols.length === 0) return;
 
-    const total = select.options.length;
-    if (total === 1) {
-      const onlyId = select.options[0].value;
-      select.value = onlyId;
-      setProtocol(onlyId);
-      return;
-    }
+    // pool: all non-archived, non-deleted
+    const pool = protocols.filter(function (p) {
+      return (
+        archivedIds.indexOf(p.id) === -1 &&
+        deletedIds.indexOf(p.id) === -1
+      );
+    });
 
-    let idx = Math.floor(Math.random() * total);
+    if (pool.length === 0) return;
+
+    let idx = Math.floor(Math.random() * pool.length);
     let safety = 0;
-    if (currentProtocol) {
-      while (
-        select.options[idx].value === currentProtocol.id &&
-        safety < 10
-      ) {
-        idx = Math.floor(Math.random() * total);
+
+    if (currentProtocol && pool.length > 1) {
+      while (pool[idx].id === currentProtocol.id && safety < 10) {
+        idx = Math.floor(Math.random() * pool.length);
         safety++;
       }
     }
-    const id = select.options[idx].value;
-    select.value = id;
-    setProtocol(id);
+
+    const chosen = pool[idx];
+    if (!chosen) return;
+
+    const catSelect = document.getElementById("categorySelect");
+    const categoryValue = chosen.category || "Other";
+
+    if (catSelect) {
+      // Set category to this protocol's category, if it exists, otherwise All
+      // If it's not in category list (unlikely), All will just show all.
+      catSelect.value = categoryValue;
+    }
+
+    filterAndPopulateProtocols(categoryValue, chosen.id);
   });
 }
 
