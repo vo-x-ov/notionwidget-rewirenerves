@@ -2,30 +2,35 @@
   {
     "id": "trading_post_loss_reset",
     "name": "Trading – Post-Loss Reset",
+    "category": "Trading",
     "tags": ["Trading", "Loss → Neutral → Empowered"],
     "body": "PHASE 1 — LOSS RESPONSE (60–90 seconds)\n1. 10-Second Exhale\n   Let shoulders drop. Hand over sternum.\n   “We are safe.”\n\n2. Acknowledge the risk\n   “I took a planned risk. This loss is the cost of doing business.”\n\n3. The 3 Truths\n   – I followed my plan\n   – The stop protected me\n   – One loss does not erase growth\n\nPHASE 2 — NEUTRAL ZONE\n1. Micro-Debrief\n   – Was the setup valid?\n   – Was my risk clear?\n   – Did I respect my stop?\n   – Would I take this trade again?\n\n2. Line in the Sand\n   “The trade is over. I release the rest.”\n\nPHASE 3 — EMPOWERED STATE\n1. Identity Re-Anchor\n   “I am a disciplined trader. Consistency is my edge.”\n\n2. Reorientation\n   Turn 10 degrees, stretch, sip water, or glance at your rules.\n\n3. Empowerment Seal\n   “Steady gains come from steady behavior. Discipline always pays me.”"
   },
   {
     "id": "trading_post_win_grounding",
     "name": "Trading – Post-Win Grounding",
+    "category": "Trading",
     "tags": ["Trading", "Gains", "De-Exite"],
     "body": "1. Pause for 10 seconds and breathe.\n2. Acknowledge:\n   “This gain came from process, not just luck.”\n3. Log the trade and note one thing you did well.\n4. Say:\n   “I do not chase. I repeat what works.”\n5. Step away from the chart for 2–5 minutes before considering another trade."
   },
   {
     "id": "home_parenting_boundary_reset",
     "name": "Home – Parenting Boundary Reset",
+    "category": "Parenting",
     "tags": ["Parenting", "Boundary", "Fight/Flight"],
     "body": "1. Step out of the room if possible.\n2. Hand to chest or sternum:\n   “I am the adult nervous system here.”\n3. Name the feeling out loud or silently:\n   frustration, anger, hurt, helplessness.\n4. Ask:\n   “What boundary am I honoring right now?”\n5. Choose one clear sentence to carry back in:\n   “I hear you. The boundary stays.”\n6. Re-enter with:\n   firm voice, soft heart, clear limit."
   },
   {
     "id": "relationship_partner_stress_support",
     "name": "Relationship – Partner Stress Support",
+    "category": "Relationship",
     "tags": ["Marriage", "Support", "Co-Regulation"],
     "body": "1. Notice the urge to fix or control.\n2. Breathe and say internally:\n   “I am here to witness, not to manage.”\n3. Ask your partner:\n   “Do you want comfort, solutions, or just someone to listen?”\n4. Offer one validating sentence:\n   “What you’re feeling makes sense.”\n5. Afterward, remind yourself:\n   “We’re on the same team, even under stress.”"
   },
   {
     "id": "acute_overwhelm_reset",
     "name": "Self – Acute Overwhelm Reset",
+    "category": "Self",
     "tags": ["Overwhelm", "Anxiety", "Grounding"],
     "body": "1. Orient to the room:\n   Name 5 things you see, 4 you can touch, 3 you can hear, 2 you can smell, 1 you can taste.\n2. Relax the jaw, drop the shoulders, unclench hands.\n3. Say:\n   “This moment is intense, not permanent.”\n4. Choose one tiny next action only.\n5. Optional: drink water and take three slow exhales longer than your inhales."
   }
