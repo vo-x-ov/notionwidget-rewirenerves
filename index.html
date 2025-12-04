@@ -8,6 +8,8 @@
 </head>
 <body>
   <div class="widget-container">
+    
+    <!-- HEADER -->
     <header class="widget-header">
       <div class="widget-title">
         <span class="widget-icon">🧠</span>
@@ -16,27 +18,29 @@
           <p class="widget-subtitle">State-shift protocols at a glance</p>
         </div>
       </div>
+
+      <!-- Controls (selects + buttons) -->
       <div class="widget-controls">
-  <div class="widget-select-group">
-    <div class="widget-select-wrapper">
-      <label for="categorySelect">Type:</label>
-      <select id="categorySelect"></select>
-    </div>
-    <div class="widget-select-wrapper">
-      <label for="protocolSelect">Protocol:</label>
-      <select id="protocolSelect"></select>
-    </div>
-  </div>
+        <div class="widget-select-group">
+          <div class="widget-select-wrapper">
+            <label for="categorySelect">Type:</label>
+            <select id="categorySelect"></select>
+          </div>
+          <div class="widget-select-wrapper">
+            <label for="protocolSelect">Protocol:</label>
+            <select id="protocolSelect"></select>
+          </div>
+        </div>
 
-  <div class="widget-control-buttons">
-    <button id="completeBtn" class="complete-btn">Complete</button>
-    <button id="randomBtn" class="random-btn">Random</button>
-    <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
-  </div>
-</div>
-
+        <div class="widget-control-buttons">
+          <button id="completeBtn" class="complete-btn">Complete</button>
+          <button id="randomBtn" class="random-btn">Random</button>
+          <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
+        </div>
+      </div>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="widget-body">
       <div id="microMantra" class="micro-mantra"></div>
 
@@ -45,52 +49,59 @@
       <pre id="protocolBody" class="protocol-text"></pre>
     </main>
 
+    <!-- SETTINGS PANEL -->
     <footer class="widget-footer">
-
       <div id="settingsPanel" class="settings-panel">
+
+        <!-- Add Protocol Section -->
         <div class="settings-section">
           <h3>Add protocol</h3>
+
           <div class="settings-field">
             <label for="addName">Name</label>
             <input id="addName" type="text" placeholder="e.g., Trading – Micro Pullback Reset" />
           </div>
+
           <div class="settings-field">
             <label for="addCategory">Category</label>
-            <input id="addCategory" type="text" placeholder="Trading, Parenting, Relationship, Self…" />
+            <input id="addCategory" type="text" placeholder="Trading, Parenting, Self…" />
           </div>
+
           <div class="settings-field">
-            <label for="addTags">Tags (optional)</label>
-            <input id="addTags" type="text" placeholder="comma-separated, e.g. Calm, Breathwork" />
+            <label for="addTags">Tags</label>
+            <input id="addTags" type="text" placeholder="Calm, Breathwork…" />
           </div>
+
           <div class="settings-field">
             <label for="addBody">Protocol body</label>
-            <textarea id="addBody" rows="4" placeholder="Steps, affirmations, breaths…"></textarea>
+            <textarea id="addBody" rows="4" placeholder="Steps / cues / affirmations"></textarea>
           </div>
+
           <div class="settings-buttons">
             <button id="addSaveBtn" class="small-btn">Save</button>
             <button id="addClearBtn" class="small-btn secondary-btn">Clear</button>
           </div>
         </div>
 
+        <!-- Archive Section -->
         <div class="settings-section">
           <div class="settings-archive-header">
             <h3>Archive</h3>
             <button id="archiveCurrentBtn" class="small-btn">Archive current</button>
           </div>
-          <div id="archiveList" class="archive-list">
-            <!-- archived protocols will render here -->
-          </div>
+          <div id="archiveList" class="archive-list"></div>
         </div>
 
+        <!-- Theme Section -->
         <div class="settings-section">
           <h3>Theme</h3>
-          <div id="themeList" class="theme-list">
-            <!-- theme controls render here -->
-          </div>
+          <div id="themeList" class="theme-list"></div>
           <button id="themeResetBtn" class="small-btn secondary-btn">Reset theme defaults</button>
         </div>
+
       </div>
 
+      <!-- Completion Info -->
       <div class="footer-text-blocks">
         <span id="completionInfo" class="widget-footer-text">
           Steady gains come from steady nervous systems.
@@ -99,6 +110,7 @@
     </footer>
 
     <div id="toast" class="toast"></div>
+
   </div>
 
   <script src="script.js"></script>
