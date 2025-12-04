@@ -13,13 +13,13 @@ body {
 
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
 }
 
 /* Widget container */
 .widget-container {
-  max-width: 480px;
+  max-width: 480px;   /* base width */
   width: 100%;
   border-radius: 16px;
   padding: 16px 18px 18px;
@@ -34,6 +34,11 @@ body {
   box-shadow:
     0 14px 30px rgba(0,0,0,0.45),
     0 0 18px var(--accent);
+}
+
+/* Wide mode doubles the width */
+.widget-container.wide-mode {
+  max-width: 960px;
 }
 
 /* Header */
@@ -124,13 +129,21 @@ body {
   margin-bottom: 8px;
 }
 
-/* Protocol name & tags */
+/* Protocol header (title + collapse button) */
+.protocol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
 .widget-body h2 {
   font-size: 0.95rem;
   font-weight: 600;
   margin-bottom: 2px;
 }
 
+/* Tags */
 .protocol-tags {
   font-size: 0.7rem;
   color: var(--accent);
@@ -148,6 +161,11 @@ body {
   font-size: 0.8rem;
   line-height: 1.35;
   font-family: inherit;
+}
+
+/* When collapsed, hide the body */
+.widget-container.protocol-collapsed .protocol-text {
+  display: none;
 }
 
 /* General button styling */
@@ -181,6 +199,13 @@ body {
 .secondary-btn {
   border-color: rgba(148,163,184,0.9);
   background: radial-gradient(circle at top, #374151, #111827);
+}
+
+/* Tertiary button for collapse (slightly softer) */
+.tertiary-btn {
+  border-color: rgba(148,163,184,0.8);
+  background: radial-gradient(circle at top, #1f2937, #020617);
+  font-size: 0.7rem;
 }
 
 .complete-btn:hover,
@@ -321,6 +346,19 @@ body {
   height: 20px;
   border-radius: 999px;
   border: 1px solid #4b5563;
+}
+
+/* Layout toggle */
+.layout-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #e5e7eb;
+}
+
+.layout-toggle input {
+  accent-color: var(--accent);
 }
 
 /* Footer text */
