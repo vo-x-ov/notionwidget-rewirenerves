@@ -51,13 +51,23 @@ body {
   color: #9ca3af;
 }
 
-/* Select */
+/* Select group */
+.widget-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .widget-select-wrapper {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 0.72rem;
   color: #9ca3af;
+}
+
+.widget-select-wrapper label {
+  white-space: nowrap;
 }
 
 .widget-select-wrapper select {
@@ -107,6 +117,31 @@ body {
   margin-top: 10px;
   border-top: 1px dashed rgba(148, 163, 184, 0.3);
   padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.complete-btn {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(129, 140, 248, 0.9);
+  background: radial-gradient(circle at top, #312e81, #1e1b4b);
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+}
+
+.complete-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(129, 140, 248, 0.45);
+}
+
+.complete-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.8);
 }
 
 .widget-footer-text {
