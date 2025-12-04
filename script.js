@@ -12,6 +12,8 @@ const CUSTOM_PROTOCOLS_KEY = "rewireNerves_customProtocols";
 const ARCHIVED_IDS_KEY = "rewireNerves_archivedIds";
 const DELETED_IDS_KEY = "rewireNerves_deletedIds";
 
+let toastTimeout = null;
+
 /* ---------- Main load ---------- */
 
 async function loadProtocols() {
@@ -39,6 +41,8 @@ async function loadProtocols() {
     const initialCategory =
       lastProtocol && lastProtocol.category ? lastProtocol.category : "All";
     filterAndPopulateProtocols(initialCategory, lastProtocol ? lastProtocol.id : null);
+
+    renderArchiveList();
   } catch (error) {
     console.error(error);
     const bodyEl = document.getElementById("protocolBody");
@@ -293,6 +297,7 @@ function setupCompletionButton() {
     data.lastCompleted = new Date().toISOString();
     safeSetLocalStorage(key, JSON.stringify(data));
     updateCompletionUI(currentProtocol.id);
+    showToast("Protocol marked as completed.");
   });
 }
 
@@ -363,43 +368,52 @@ function setupRandomButton() {
     const categoryValue = chosen.category || "Other";
 
     if (catSelect) {
-      // Set category to this protocol's category, if it exists, otherwise All
-      // If it's not in category list (unlikely), All will just show all.
       catSelect.value = categoryValue;
     }
 
     filterAndPopulateProtocols(categoryValue, chosen.id);
+    showToast("Random protocol selected.");
   });
 }
 
-/* ---------- Add / Archive / Manage Archive ---------- */
+/* ---------- Settings panel + Add / Archive ---------- */
 
-function setupAddButton() {
-  const btn = document.getElementById("addBtn");
-  if (!btn) return;
+function setupSettingsToggle() {
+  const toggle = document.getElementById("settingsToggle");
+  const panel = document.getElementById("settingsPanel");
+  if (!toggle || !panel) return;
 
-  btn.addEventListener("click", function () {
-    const name = window.prompt("New protocol name:");
-    if (!name) return;
+  toggle.addEventListener("click", function () {
+    const isOpen = panel.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+}
 
-    let category = window.prompt(
-      "Category (e.g., Trading, Parenting, Relationship, Self):",
-      "Self"
-    );
+function setupAddProtocolForm() {
+  const saveBtn = document.getElementById("addSaveBtn");
+  const clearBtn = document.getElementById("addClearBtn");
+  if (!saveBtn || !clearBtn) return;
+
+  saveBtn.addEventListener("click", function () {
+    const nameEl = document.getElementById("addName");
+    const categoryEl = document.getElementById("addCategory");
+    const tagsEl = document.getElementById("addTags");
+    const bodyEl = document.getElementById("addBody");
+
+    const name = nameEl ? nameEl.value.trim() : "";
+    let category = categoryEl ? categoryEl.value.trim() : "";
+    const tagsInput = tagsEl ? tagsEl.value.trim() : "";
+    const body = bodyEl ? bodyEl.value.trim() : "";
+
+    if (!name || !body) {
+      showToast("Name and body are required.");
+      return;
+    }
+
     if (!category) category = "Self";
 
-    const tagsInput = window.prompt(
-      "Tags (comma-separated, optional):",
-      ""
-    );
-
-    const body = window.prompt(
-      "Protocol steps / body (you can paste multi-line text and press OK):"
-    );
-    if (!body) return;
-
     let tags = [];
-    if (tagsInput && tagsInput.trim().length > 0) {
+    if (tagsInput.length > 0) {
       tags = tagsInput
         .split(",")
         .map(function (t) {
@@ -427,112 +441,151 @@ function setupAddButton() {
 
     customProtocols.push(newProtocol);
     saveCustomProtocols();
+    showToast("Protocol added.");
+
+    // Clear fields
+    if (nameEl) nameEl.value = "";
+    if (categoryEl) categoryEl.value = "";
+    if (tagsEl) tagsEl.value = "";
+    if (bodyEl) bodyEl.value = "";
+
     loadProtocols();
+  });
+
+  clearBtn.addEventListener("click", function () {
+    const nameEl = document.getElementById("addName");
+    const categoryEl = document.getElementById("addCategory");
+    const tagsEl = document.getElementById("addTags");
+    const bodyEl = document.getElementById("addBody");
+
+    if (nameEl) nameEl.value = "";
+    if (categoryEl) categoryEl.value = "";
+    if (tagsEl) tagsEl.value = "";
+    if (bodyEl) bodyEl.value = "";
+    showToast("Add form cleared.");
   });
 }
 
-function setupArchiveButton() {
-  const btn = document.getElementById("archiveBtn");
+function setupArchiveCurrentButton() {
+  const btn = document.getElementById("archiveCurrentBtn");
   if (!btn) return;
 
   btn.addEventListener("click", function () {
-    if (!currentProtocol) return;
+    if (!currentProtocol) {
+      showToast("No protocol selected to archive.");
+      return;
+    }
     const id = currentProtocol.id;
 
     if (archivedIds.indexOf(id) !== -1) {
-      window.alert("This protocol is already archived.");
+      showToast("Protocol is already archived.");
       return;
     }
 
     archivedIds.push(id);
     saveIdList(ARCHIVED_IDS_KEY, archivedIds);
+    showToast("Protocol archived.");
 
     const catSelect = document.getElementById("categorySelect");
     const category = catSelect ? catSelect.value : "All";
     filterAndPopulateProtocols(category, null);
+    renderArchiveList();
   });
 }
 
-function setupManageArchiveButton() {
-  const btn = document.getElementById("manageArchiveBtn");
-  if (!btn) return;
+/* ---------- Archive list render & actions ---------- */
 
-  btn.addEventListener("click", function () {
-    const allProtocols = baseProtocols.concat(customProtocols);
-    const archivedProtocols = allProtocols.filter(function (p) {
-      return archivedIds.indexOf(p.id) !== -1 && deletedIds.indexOf(p.id) === -1;
-    });
+function renderArchiveList() {
+  const container = document.getElementById("archiveList");
+  if (!container) return;
 
-    if (archivedProtocols.length === 0) {
-      window.alert("No archived protocols.");
-      return;
-    }
-
-    let listStr = "";
-    for (let i = 0; i < archivedProtocols.length; i++) {
-      const p = archivedProtocols[i];
-      listStr +=
-        (i + 1) +
-        ". " +
-        p.name +
-        " [" +
-        (p.category || "Other") +
-        "]\n";
-    }
-
-    const actionRaw = window.prompt(
-      "Archive manager:\n\n" +
-        listStr +
-        "\nType 'r' to restore, 'd' to delete permanently, or press Cancel to exit."
-    );
-    if (!actionRaw) return;
-    const action = actionRaw.trim().toLowerCase();
-    if (action !== "r" && action !== "d") return;
-
-    const indexRaw = window.prompt(
-      "Enter the number of the protocol to act on:"
-    );
-    if (!indexRaw) return;
-    const index = parseInt(indexRaw, 10);
-    if (isNaN(index) || index < 1 || index > archivedProtocols.length) {
-      window.alert("Invalid selection.");
-      return;
-    }
-
-    const target = archivedProtocols[index - 1];
-    if (!target) return;
-
-    if (action === "r") {
-      archivedIds = archivedIds.filter(function (id) {
-        return id !== target.id;
-      });
-      saveIdList(ARCHIVED_IDS_KEY, archivedIds);
-      loadProtocols();
-    } else if (action === "d") {
-      const isCustom = customProtocols.some(function (p) {
-        return p.id === target.id;
-      });
-
-      if (isCustom) {
-        customProtocols = customProtocols.filter(function (p) {
-          return p.id !== target.id;
-        });
-        saveCustomProtocols();
-      } else {
-        if (deletedIds.indexOf(target.id) === -1) {
-          deletedIds.push(target.id);
-          saveIdList(DELETED_IDS_KEY, deletedIds);
-        }
-      }
-
-      archivedIds = archivedIds.filter(function (id) {
-        return id !== target.id;
-      });
-      saveIdList(ARCHIVED_IDS_KEY, archivedIds);
-
-      loadProtocols();
-    }
+  const allProtocols = baseProtocols.concat(customProtocols);
+  const archivedProtocols = allProtocols.filter(function (p) {
+    return archivedIds.indexOf(p.id) !== -1 && deletedIds.indexOf(p.id) === -1;
   });
+
+  if (archivedProtocols.length === 0) {
+    container.innerHTML = '<p class="archive-empty">No archived protocols.</p>';
+    return;
+  }
+
+  let html = "";
+  for (let i = 0; i < archivedProtocols.length; i++) {
+    const p = archivedProtocols[i];
+    html +=
+      '<div class="archive-row">' +
+      '<div class="archive-info">' +
+      '<div class="archive-name">' +
+      escapeHtml(p.name) +
+      "</div>" +
+      '<div class="archive-category">' +
+      escapeHtml(p.category || "Other") +
+      "</div>" +
+      "</div>" +
+      '<div class="archive-actions">' +
+      '<button class="small-btn archive-restore" data-id="' +
+      p.id +
+      '">Restore</button>' +
+      '<button class="small-btn secondary-btn archive-delete" data-id="' +
+      p.id +
+      '">Delete</button>' +
+      "</div>" +
+      "</div>";
+  }
+
+  container.innerHTML = html;
+
+  const restoreBtns = container.querySelectorAll(".archive-restore");
+  restoreBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-id");
+      handleRestore(id);
+    });
+  });
+
+  const deleteBtns = container.querySelectorAll(".archive-delete");
+  deleteBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-id");
+      handleDelete(id);
+    });
+  });
+}
+
+function handleRestore(id) {
+  archivedIds = archivedIds.filter(function (x) {
+    return x !== id;
+  });
+  saveIdList(ARCHIVED_IDS_KEY, archivedIds);
+  showToast("Protocol restored.");
+
+  loadProtocols();
+}
+
+function handleDelete(id) {
+  const isCustom = customProtocols.some(function (p) {
+    return p.id === id;
+  });
+
+  if (isCustom) {
+    customProtocols = customProtocols.filter(function (p) {
+      return p.id !== id;
+    });
+    saveCustomProtocols();
+  } else {
+    if (deletedIds.indexOf(id) === -1) {
+      deletedIds.push(id);
+      saveIdList(DELETED_IDS_KEY, deletedIds);
+    }
+  }
+
+  archivedIds = archivedIds.filter(function (x) {
+    return x !== id;
+  });
+  saveIdList(ARCHIVED_IDS_KEY, archivedIds);
+  showToast("Protocol deleted from archive.");
+
+  loadProtocols();
 }
 
 /* ---------- Utilities ---------- */
@@ -566,13 +619,34 @@ function safeSetLocalStorage(key, value) {
   }
 }
 
+function showToast(message) {
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.add("visible");
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function () {
+    el.classList.remove("visible");
+  }, 2500);
+}
+
+function escapeHtml(str) {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /* ---------- Init ---------- */
 
 document.addEventListener("DOMContentLoaded", function () {
   loadProtocols();
   setupCompletionButton();
   setupRandomButton();
-  setupAddButton();
-  setupArchiveButton();
-  setupManageArchiveButton();
+  setupSettingsToggle();
+  setupAddProtocolForm();
+  setupArchiveCurrentButton();
 });
