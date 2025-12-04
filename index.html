@@ -44,7 +44,11 @@
     <main class="widget-body">
       <div id="microMantra" class="micro-mantra"></div>
 
-      <h2 id="protocolName"></h2>
+      <div class="protocol-header">
+        <h2 id="protocolName"></h2>
+        <button id="collapseToggle" class="small-btn tertiary-btn">Collapse</button>
+      </div>
+
       <p id="protocolTags" class="protocol-tags"></p>
       <pre id="protocolBody" class="protocol-text"></pre>
     </main>
@@ -97,6 +101,15 @@
           <h3>Theme</h3>
           <div id="themeList" class="theme-list"></div>
           <button id="themeResetBtn" class="small-btn secondary-btn">Reset theme defaults</button>
+        </div>
+
+        <!-- Layout Section -->
+        <div class="settings-section">
+          <h3>Layout</h3>
+          <label class="layout-toggle">
+            <input type="checkbox" id="wideModeToggle" />
+            <span>Wide mode (more horizontal space)</span>
+          </label>
         </div>
 
       </div>
