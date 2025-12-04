@@ -16,16 +16,25 @@
           <p class="widget-subtitle">State-shift protocols at a glance</p>
         </div>
       </div>
-      <div class="widget-select-group">
-        <div class="widget-select-wrapper">
-          <label for="categorySelect">Type:</label>
-          <select id="categorySelect"></select>
-        </div>
-        <div class="widget-select-wrapper">
-          <label for="protocolSelect">Protocol:</label>
-          <select id="protocolSelect"></select>
-        </div>
-      </div>
+      <div class="widget-controls">
+  <div class="widget-select-group">
+    <div class="widget-select-wrapper">
+      <label for="categorySelect">Type:</label>
+      <select id="categorySelect"></select>
+    </div>
+    <div class="widget-select-wrapper">
+      <label for="protocolSelect">Protocol:</label>
+      <select id="protocolSelect"></select>
+    </div>
+  </div>
+
+  <div class="widget-control-buttons">
+    <button id="completeBtn" class="complete-btn">Complete</button>
+    <button id="randomBtn" class="random-btn">Random</button>
+    <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
+  </div>
+</div>
+
     </header>
 
     <main class="widget-body">
@@ -37,11 +46,6 @@
     </main>
 
     <footer class="widget-footer">
-      <div class="footer-buttons-main">
-        <button id="completeBtn" class="complete-btn">Mark as completed</button>
-        <button id="randomBtn" class="random-btn">Random protocol</button>
-        <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
-      </div>
 
       <div id="settingsPanel" class="settings-panel">
         <div class="settings-section">
