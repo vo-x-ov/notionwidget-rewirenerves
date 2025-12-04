@@ -87,6 +87,17 @@ body {
   border-top: 1px solid rgba(148, 163, 184, 0.3);
 }
 
+/* Micro mantra */
+.micro-mantra {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+
+/* Protocol heading & tags */
 .widget-body h2 {
   font-size: 0.95rem;
   font-weight: 600;
@@ -119,11 +130,20 @@ body {
   padding-top: 6px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.complete-btn {
-  align-self: flex-start;
+.footer-buttons-main,
+.footer-buttons-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Buttons */
+.complete-btn,
+.random-btn,
+.small-btn {
   font-size: 0.72rem;
   padding: 4px 10px;
   border-radius: 999px;
@@ -134,14 +154,24 @@ body {
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
 }
 
-.complete-btn:hover {
+.complete-btn:hover,
+.random-btn:hover,
+.small-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(129, 140, 248, 0.45);
 }
 
-.complete-btn:active {
+.complete-btn:active,
+.random-btn:active,
+.small-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.8);
+}
+
+/* Footer text */
+.footer-text-blocks {
+  display: flex;
+  flex-direction: column;
 }
 
 .widget-footer-text {
