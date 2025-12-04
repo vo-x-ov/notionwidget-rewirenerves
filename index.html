@@ -40,18 +40,53 @@
       <div class="footer-buttons-main">
         <button id="completeBtn" class="complete-btn">Mark as completed</button>
         <button id="randomBtn" class="random-btn">Random protocol</button>
+        <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
       </div>
-      <div class="footer-buttons-secondary">
-        <button id="addBtn" class="small-btn">Add</button>
-        <button id="archiveBtn" class="small-btn">Archive current</button>
-        <button id="manageArchiveBtn" class="small-btn">Manage archive</button>
+
+      <div id="settingsPanel" class="settings-panel">
+        <div class="settings-section">
+          <h3>Add protocol</h3>
+          <div class="settings-field">
+            <label for="addName">Name</label>
+            <input id="addName" type="text" placeholder="e.g., Trading – Micro Pullback Reset" />
+          </div>
+          <div class="settings-field">
+            <label for="addCategory">Category</label>
+            <input id="addCategory" type="text" placeholder="Trading, Parenting, Relationship, Self…" />
+          </div>
+          <div class="settings-field">
+            <label for="addTags">Tags (optional)</label>
+            <input id="addTags" type="text" placeholder="comma-separated, e.g. Calm, Breathwork" />
+          </div>
+          <div class="settings-field">
+            <label for="addBody">Protocol body</label>
+            <textarea id="addBody" rows="4" placeholder="Steps, affirmations, breaths…"></textarea>
+          </div>
+          <div class="settings-buttons">
+            <button id="addSaveBtn" class="small-btn">Save</button>
+            <button id="addClearBtn" class="small-btn secondary-btn">Clear</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-archive-header">
+            <h3>Archive</h3>
+            <button id="archiveCurrentBtn" class="small-btn">Archive current</button>
+          </div>
+          <div id="archiveList" class="archive-list">
+            <!-- archived protocols will render here -->
+          </div>
+        </div>
       </div>
+
       <div class="footer-text-blocks">
         <span id="completionInfo" class="widget-footer-text">
           Steady gains come from steady nervous systems.
         </span>
       </div>
     </footer>
+
+    <div id="toast" class="toast"></div>
   </div>
 
   <script src="script.js"></script>
