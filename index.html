@@ -1,131 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+head>
   <meta charset="UTF-8" />
-  <title>Rewire Nerves Widget</title>
+  <title>Rewire Nerves</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="widget-container">
-    
+  <div class="rn-widget-container" id="rnWidget">
+
     <!-- HEADER -->
-    <header class="widget-header">
-      <div class="widget-title">
-        <span class="widget-icon">🧠</span>
+    <header class="rn-header">
+      <div class="rn-title-block">
+        <div class="rn-icon">🧠✨</div>
         <div>
           <h1>Rewire Nerves</h1>
-          <p class="widget-subtitle">State-shift protocols at a glance</p>
+          <p class="rn-subtitle">Shift your state with intentional protocols.</p>
         </div>
       </div>
 
-      <!-- Controls: dropdowns + buttons stacked -->
-      <div class="widget-controls">
-        <div class="widget-select-group">
-          <div class="widget-select-wrapper">
-            <label for="categorySelect">Type:</label>
-            <select id="categorySelect"></select>
-          </div>
-          <div class="widget-select-wrapper">
-            <label for="protocolSelect">Protocol:</label>
-            <select id="protocolSelect"></select>
-          </div>
+      <div class="rn-top-controls">
+        <div class="rn-select-group">
+          <label for="rnTypeSelect">Domain</label>
+          <select id="rnTypeSelect"></select>
         </div>
 
-        <div class="widget-control-buttons">
-          <button id="completeBtn" class="complete-btn">Complete</button>
-          <button id="randomBtn" class="random-btn">Random</button>
-          <button id="settingsToggle" class="settings-btn" aria-expanded="false" title="Open settings">⚙️</button>
+        <div class="rn-select-group">
+          <label for="rnProtocolSelect">Protocol</label>
+          <select id="rnProtocolSelect"></select>
+        </div>
+
+        <div class="rn-top-buttons">
+          <button id="rnMarkCompleteBtn" class="btn small">Mark as complete</button>
+          <button id="rnRandomProtocolBtn" class="btn small secondary">Random protocol</button>
+          <button id="rnSettingsToggle" class="btn small settings" aria-expanded="false" title="Open settings">
+            ⚙️
+          </button>
         </div>
       </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="widget-body">
-      <div id="microMantra" class="micro-mantra"></div>
+    <main class="rn-body">
+      <!-- Micro mantra -->
+      <div id="rnMicroMantra" class="rn-micro-mantra"></div>
 
-      <div class="protocol-header">
-        <h2 id="protocolName"></h2>
-        <button id="collapseToggle" class="small-btn tertiary-btn">Collapse</button>
-      </div>
+      <!-- Protocol card -->
+      <section class="rn-protocol-card">
+        <header class="rn-protocol-header">
+          <div>
+            <h2 id="rnProtocolTitle" class="rn-protocol-title">Protocol title</h2>
+            <p id="rnProtocolSummary" class="rn-protocol-summary"></p>
+          </div>
+          <button id="rnToggleBodyBtn" class="btn xsmall secondary" type="button">
+            Collapse body
+          </button>
+        </header>
 
-      <p id="protocolTags" class="protocol-tags"></p>
-      <pre id="protocolBody" class="protocol-text"></pre>
+        <div id="rnProtocolBody" class="rn-protocol-body">
+          <!-- Filled from JS -->
+        </div>
+
+        <footer class="rn-protocol-footer">
+          <div class="rn-stat-line">
+            <span id="rnCompletionCount" class="rn-stat-pill">Completed 0 times</span>
+            <span id="rnLastCompleted" class="rn-stat-pill rn-stat-muted">Not completed yet</span>
+          </div>
+        </footer>
+      </section>
+
+      <!-- Backup reminder -->
+      <div id="rnBackupReminder" class="rn-backup-reminder"></div>
     </main>
 
-    <!-- SETTINGS PANEL + COMPLETION INFO -->
-    <footer class="widget-footer">
-      <div id="settingsPanel" class="settings-panel">
-
-        <!-- Add Protocol Section -->
-        <div class="settings-section">
-          <h3>Add protocol</h3>
-
-          <div class="settings-field">
-            <label for="addName">Name</label>
-            <input id="addName" type="text" placeholder="e.g., Trading – Micro Pullback Reset" />
-          </div>
-
-          <div class="settings-field">
-            <label for="addCategory">Category</label>
-            <input id="addCategory" type="text" placeholder="Trading, Parenting, Self…" />
-          </div>
-
-          <div class="settings-field">
-            <label for="addTags">Tags</label>
-            <input id="addTags" type="text" placeholder="Calm, Breathwork…" />
-          </div>
-
-          <div class="settings-field">
-            <label for="addBody">Protocol body</label>
-            <textarea id="addBody" rows="4" placeholder="Steps / cues / affirmations"></textarea>
-          </div>
-
-          <div class="settings-buttons">
-            <button id="addSaveBtn" class="small-btn">Save</button>
-            <button id="addClearBtn" class="small-btn secondary-btn">Clear</button>
-          </div>
-        </div>
-
-        <!-- Archive Section -->
-        <div class="settings-section">
-          <div class="settings-archive-header">
-            <h3>Archive</h3>
-            <button id="archiveCurrentBtn" class="small-btn">Archive current</button>
-          </div>
-          <div id="archiveList" class="archive-list"></div>
-        </div>
-
-        <!-- Theme Section -->
-        <div class="settings-section">
-          <h3>Theme</h3>
-          <div id="themeList" class="theme-list"></div>
-          <button id="themeResetBtn" class="small-btn secondary-btn">Reset theme defaults</button>
-        </div>
-
-        <!-- Layout Section -->
-        <div class="settings-section">
-          <h3>Layout</h3>
-          <label class="layout-toggle">
-            <input type="checkbox" id="wideModeToggle" />
-            <span>Wide mode (more horizontal space)</span>
-          </label>
-        </div>
-
+    <!-- SETTINGS PANEL -->
+    <section id="rnSettingsPanel" class="rn-settings-panel">
+      <!-- Display settings -->
+      <div class="rn-settings-section">
+        <h3>Display</h3>
+        <label class="rn-toggle-row">
+          <input type="checkbox" id="rnWideModeToggle" />
+          <span>Wide mode</span>
+        </label>
       </div>
 
-      <!-- Completion Info -->
-      <div class="footer-text-blocks">
-        <span id="completionInfo" class="widget-footer-text">
-          Steady gains come from steady nervous systems.
-        </span>
+      <!-- Types -->
+      <div class="rn-settings-section">
+        <h3>Domains</h3>
+        <p class="rn-settings-helper">Add or archive categories like Trading, Parenting, Partner, Self.</p>
+        <div class="rn-inline-add">
+          <input
+            id="rnNewTypeInput"
+            class="rn-input"
+            type="text"
+            placeholder="Add a domain (e.g. Trading)"
+          />
+          <button id="rnAddTypeBtn" class="btn small">Add</button>
+        </div>
+        <div id="rnTypeManageList" class="rn-manage-list"></div>
       </div>
-    </footer>
 
-    <div id="toast" class="toast"></div>
+      <!-- Protocols -->
+      <div class="rn-settings-section">
+        <h3>Protocols in selected domain</h3>
+        <p class="rn-settings-helper">
+          Manage rituals for the currently selected domain.
+        </p>
 
+        <div class="rn-inline-add rn-protocol-add">
+          <input
+            id="rnNewProtocolTitle"
+            class="rn-input"
+            type="text"
+            placeholder="Protocol title"
+          />
+          <input
+            id="rnNewProtocolSummary"
+            class="rn-input"
+            type="text"
+            placeholder="Short summary"
+          />
+        </div>
+        <textarea
+          id="rnNewProtocolBody"
+          class="rn-input rn-textarea"
+          placeholder="Full protocol steps, reflections, breaths…"
+        ></textarea>
+        <div class="rn-inline-add">
+          <button id="rnAddProtocolBtn" class="btn small">Add protocol</button>
+        </div>
+
+        <div id="rnProtocolManageList" class="rn-manage-list"></div>
+      </div>
+
+      <!-- Backup & transfer -->
+      <div class="rn-settings-section">
+        <h3>Backup & transfer</h3>
+        <p class="rn-settings-helper">
+          Export your Rewire Nerves data as JSON, or import a backup.
+        </p>
+        <div class="rn-inline-add">
+          <button id="rnExportDataBtn" class="btn small">Export data</button>
+          <button id="rnImportDataBtn" class="btn small secondary">Import data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOAST -->
+    <div id="rnToast" class="rn-toast"></div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Magical backup modal -->
+  <div id="rnBackupModal" class="backup-modal-backdrop">
+    <div class="backup-modal">
+      <h2 class="backup-modal-title">Rewire Nerves Backup</h2>
+      <p class="backup-modal-text">
+        Copy this backup JSON and store it somewhere safe (Notion page, file, etc.).
+      </p>
+      <textarea
+        id="rnBackupModalTextarea"
+        class="backup-modal-textarea"
+        readonly
+      ></textarea>
+      <div class="backup-modal-actions">
+        <button id="rnBackupModalSelectBtn" class="btn small">Select all</button>
+        <button id="rnBackupModalCloseBtn" class="btn small secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=2"></script>
 </body>
 </html>
